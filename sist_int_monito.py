@@ -22,7 +22,7 @@ class MonitorMissaoEspacial:
                 comunicacao = float(input("-> Insira a Qualidade do Sinal📡 (%): "))
                 break
             except ValueError:
-                print("\n❌ Erro: Por favor, insira  números")
+                print("\n❌ Erro: Por favor, insira valores aceitaveis")
 
         # Define o status dos módulos com base no estado do sistema
         if self.modo_seguranca:
