@@ -109,7 +109,7 @@ class MonitorMissaoEspacial:
                 print("\nEncerrando sistema de monitoramento espacial. Até logo, capitão!")
                 break
 
-
+# Inicialização do Sistema inteligente de monitoramento
 if __name__ == "__main__":
     monitor = MonitorMissaoEspacial()
     monitor.executar()
