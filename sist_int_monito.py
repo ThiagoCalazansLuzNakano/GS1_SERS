@@ -1,9 +1,10 @@
 from datetime import datetime
 
 # Configuração dos limites (Limiares de Decisão)
-TEMP_MAX = 80.0  # Graus Celsius
-ENERGIA_MIN = 20.0  # Porcentagem
-SINAL_MIN = 30.0  # Porcentagem de qualidade de sinal
+TEMP_MAX = 60.0  #(superaquecimento) Graus Celsius
+TEMP_MIN = 0.0 #(congelamento)
+ENERGIA_MIN = 20.0  # Porcentagem de energia
+SINAL_MIN = 20.0  # Porcentagem de qualidade de sinal
 
 
 class MonitorMissaoEspacial:
@@ -26,9 +27,9 @@ class MonitorMissaoEspacial:
 
         # Define o status dos módulos com base no estado do sistema
         if self.modo_seguranca:
-            status_modulos = {"Propulsão": "DESLIGADO (ECO)", "Suporte_Vida": "LIGADO", "Painéis_Solares": "OTIMIZADO"}
+            status_modulos = {"Propulsão": "DESLIGADO (ECO)", "Modo de Segurança": "LIGADO", "Painéis_Solares": "OTIMIZADO"}
         else:
-            status_modulos = {"Propulsão": "LIGADO", "Suporte_Vida": "LIGADO", "Painéis_Solares": "LIGADO"}
+            status_modulos = {"Propulsão": "LIGADO", "Modo de Segurança": "DESLIGADO", "Painéis_Solares": "LIGADO"}
 
         return {
             "timestamp": datetime.now().strftime("%H:%M:%S"),
@@ -45,17 +46,20 @@ class MonitorMissaoEspacial:
 
         # 1. Verificação da temperatura
         if dados["temperatura"] > TEMP_MAX:
-            alertas.append(f"[🚨PERIGO!] Temperatura crítica detectada: {dados['temperatura']}°C!")
-            acoes.append("Ativando sistema de resfriamento líquido emergencial.")
+            alertas.append(f"[PERIGO!] Risco de superaquecimento (Crítico para os eletrônicos): {dados['temperatura']}°C!")
+            acoes.append("Alterando a orientação da nave para colocar os sistemas na sombra.")
+        elif dados["temperatura"] < TEMP_MIN:
+            alertas.append(f"[PERIGO!] Risco de congelamento (Crítico para as baterias): {dados['temperatura']}°C!")
+            acoes.append("Ativando aquecedores térmicos internos para proteger as baterias.")
 
         # 2. Verificação da comunicação
         if dados["comunicacao"] < SINAL_MIN:
-            alertas.append(f"[🚨ALERTA!] Sinal de comunicação fraco: {dados['comunicacao']}%")
-            acoes.append("Redirecionando antena principal para a estação terrestre.")
+            alertas.append(f"[ALERTA!] Sinal crítico LOS(Loss of Signal) iminente: {dados['comunicacao']}%")
+            acoes.append("Redirecionando todas as antenas para a estação terrestre.")
 
         # 3. Verificação da energia e sustentabilidade
         if dados["energia"] < ENERGIA_MIN:
-            alertas.append(f"[🚨CRÍTICO!] Nível de energia baixo: {dados['energia']}%")
+            alertas.append(f"[CRÍTICO!] Nível de energia crítica: {dados['energia']}%")
             if not self.modo_seguranca:
                 self.modo_seguranca = True
                 acoes.append("Protocolo de eco-sustentabilidade ativado automaticamente.")
